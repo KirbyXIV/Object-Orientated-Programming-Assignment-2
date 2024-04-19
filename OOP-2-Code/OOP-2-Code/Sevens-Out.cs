@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OOP_2_Code
 {
-    internal class Sevens_Out : Game
+    class Sevens_Out : Game
     {
 
         protected override void Play()
@@ -29,9 +29,6 @@ namespace OOP_2_Code
             {
                 Console.WriteLine("It's a tie!" +
                     $"\nPlayer 1 score: {playerScores[0]}" +
-
-
-
                     $"\nPlayer 2 score: {playerScores[1]}");
             }
             else
@@ -44,7 +41,7 @@ namespace OOP_2_Code
                                                                 $"\nPlayer 1 score: {playerScores[0]}" +
                                                                 $"\nPlayer 2 score: {playerScores[1]}");
             }
-            Console.WriteLine("Game Over! Returning to menu!");
+            Console.WriteLine("\nGame Over! Returning to menu!");
             Thread.Sleep(2000);
             Console.Clear();
             Game.Main();

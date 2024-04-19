@@ -7,7 +7,7 @@ namespace OOP_2_Code
     /// and one method that rolls the die, returns and integer and takes no parameters.
     /// </summary>
     /// <returns></returns>
-    internal class Die
+    class Die
     {
 
         public int DieValue { get; set; }

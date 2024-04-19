@@ -2,7 +2,7 @@
 
 namespace OOP_2_Code
 {
-	internal class Testing
+	class Testing
 	{
 
 		public static void RunTests()

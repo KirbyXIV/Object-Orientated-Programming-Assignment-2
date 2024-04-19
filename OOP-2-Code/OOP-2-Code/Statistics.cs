@@ -2,7 +2,7 @@
 
 namespace OOP_2_Code
 {
-    internal class Statistics
+    class Statistics
     {
         public static void ResetStats()
         {

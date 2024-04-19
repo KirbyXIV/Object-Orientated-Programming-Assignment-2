@@ -18,8 +18,8 @@ public abstract class Game
         ];
 
         ChooseGame(Games);
-        
     }
+        
     /// <summary>
     /// Lets the player choose a game to play, or admin possibilities
     /// </summary>
