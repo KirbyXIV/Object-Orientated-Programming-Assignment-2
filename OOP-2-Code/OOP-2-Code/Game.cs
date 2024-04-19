@@ -8,8 +8,7 @@ public abstract class Game
     /// <summary>
     /// Main Program, runs the game
     /// </summary>
-    /// <param name="args"></param>
-    static void Main(string[] args)
+    public static void Main()
     {
         // Game array
         Game[] Games =
@@ -42,7 +41,9 @@ public abstract class Game
                           $"\n{R}Admin Choices:" +
                           $"\n{R}[R]Reset Statistics" +
                           $"\n{R}[T]Run Tests" +
-                          $"\n{N}-----------------------------------------------" +
+                          $"\n{N}-------------------" +
+                          $"\n[E]Exit Program" +
+                          $"\n-----------------------------------------------" +
                            "\nEnter the number of the game you want to play"+
                            "\nOr choose from any of the admin choices above"+
                            "\nChoice: ");
@@ -73,6 +74,12 @@ public abstract class Game
                 Testing.RunTests();
                 Thread.Sleep(2500);
                 Console.Clear();
+            }
+            else if (choice.ToUpper() == "E")
+            {
+                Console.WriteLine("Exiting program...");
+                Thread.Sleep(1000);
+                Environment.Exit(0);
             }
             else
             {
