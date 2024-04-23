@@ -17,6 +17,7 @@ namespace OOP_2_Code
             bool multiplayer = false;
 
             Console.WriteLine("Now playing... Sevens Out!");
+            Statistics.sevensOutGamesPlayed++;
             Thread.Sleep(2000);
             Console.Clear();
 
@@ -54,6 +55,7 @@ namespace OOP_2_Code
                 Console.WriteLine("It's a tie!" +
                     $"\nPlayer 1 score: {playerScores[0]}" +
                     $"\nPlayer 2 score: {playerScores[1]}");
+                
             }
             else
             {
@@ -65,6 +67,18 @@ namespace OOP_2_Code
                                                                 $"\nPlayer 1 score: {playerScores[0]}" +
                                                                 $"\nPlayer 2 score: {playerScores[1]}");
             }
+
+            if (playerScores[0] > playerScores[1] && playerScores[0] > Statistics.sevensOutHighScore)
+            {
+                Console.WriteLine("New High Score!");
+                Statistics.sevensOutHighScore = playerScores[0];
+            }
+            else if (playerScores[1] > playerScores[0] && playerScores[1] > Statistics.sevensOutHighScore)
+            {
+                Console.WriteLine("New High Score!");
+                Statistics.sevensOutHighScore = playerScores[1];
+            }
+
             Console.WriteLine("\nGame Over! Returning to menu!");
             Thread.Sleep(2000);
             Console.Clear();
@@ -76,8 +90,6 @@ namespace OOP_2_Code
             string N = Console.IsOutputRedirected ? "" : "\x1b[39m"; //reset color
             string R = Console.IsOutputRedirected ? "" : "\x1b[91m"; //red
             string G = Console.IsOutputRedirected ? "" : "\x1b[92m"; //green
-            Die die1 = new Die();
-            Die die2 = new Die();
 
             bool gameOver = false;
             int total = 0;
@@ -99,20 +111,32 @@ namespace OOP_2_Code
                 }
 
                 i++;
-                die1.DieRoll();
-                die2.DieRoll();
 
-                if (die1.DieValue == die2.DieValue)
+
+                Die[] dice = new Die[2];
+                for (int j = 0; j < dice.Length; j++)
+                {
+                    dice[j] = new Die();
+                }
+
+                foreach (Die die in dice)
+                {
+                    die.DieRoll();
+                    Statistics.totalDiceRolled++;
+                }
+
+
+                if (dice[0].DieValue == dice[1].DieValue)
                 {
                     Console.WriteLine($"{G}You rolled a pair! Double Points!{N}");
-                    total = (die1.DieValue + die2.DieValue) * 2;
+                    total = (dice[0].DieValue + dice[1].DieValue) * 2;
 
                 }
-                else { total = die1.DieValue + die2.DieValue; }
+                else { total = dice[0].DieValue + dice[1].DieValue; }
 
 
                 Console.WriteLine($"Roll {i}: " +
-                    $"\nDie 1: {die1.DieValue} ¦ Die 2: {die2.DieValue} ¦ Total: {total}");
+                    $"\nDie 1: {dice[0].DieValue} ¦ Die 2: {dice[1].DieValue} ¦ Total: {total}");
 
                 sum += total;
                 if (total == 7)

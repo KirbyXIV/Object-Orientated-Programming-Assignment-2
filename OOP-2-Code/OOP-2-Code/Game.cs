@@ -39,7 +39,8 @@ public abstract class Game
                           $"\n{G}[2]Sevens Out" +
                           $"\n{N}-------------------" +
                           $"\n{R}Admin Choices:" +
-                          $"\n{R}[R]Reset Statistics" +
+                          $"\n{R}[V]View Statistics" +
+                          $"\n{R}[S]Reset Statistics" +
                           $"\n{R}[T]Run Tests" +
                           $"\n{N}-------------------" +
                           $"\n[E]Exit Program" +
@@ -61,11 +62,19 @@ public abstract class Game
                     Console.WriteLine("Invalid input. Please enter a number between 1 and " + Games.Length);
                 }
             }
-            else if (choice.ToUpper() == "R")
+            else if (choice.ToUpper() == "S")
             {
                 Console.WriteLine($"{R}Stats reset... Clearing Console \n");
                 Statistics.ResetStats();
                 Thread.Sleep(2500);
+                Console.Clear();
+            }
+            else if (choice.ToUpper() == "V")
+            {
+                Console.WriteLine($"{G}Stats saved... Clearing Console \n");
+                Statistics.SavedStats();
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
                 Console.Clear();
             }
             else if (choice.ToUpper() == "T")

@@ -12,16 +12,20 @@ namespace OOP_2_Code
         protected override void Play()
         {
             int turn = 0;
-            int[] playerScores = [0, 0];
+            int[] playerRolls = [0, 0];
             bool multiplayer = false;
+            int highscore;
 
             Console.WriteLine("Now playing... Three or More!");
+            Statistics.threeOrMoreGamesPlayed++;
             Thread.Sleep(2000);
             Console.Clear();
 
             while (true)
             {
-                Console.WriteLine("Would you like to play against another player or the computer? P/C");
+                Console.WriteLine("Would you like to play against another player or the computer? P/C" +
+                    "\nThe computer will always reroll the remaining" +
+                    "\nLowest rolls to get to 20 points wins");
                 var choice = Console.ReadLine();
                 if (choice.ToUpper() == "P")
                 {
@@ -43,26 +47,41 @@ namespace OOP_2_Code
             for (int i = 0; i < 2; i++)
             {
                 Console.WriteLine($"Player {turn + 1}:");
-                playerScores[i] = WhichPlayer(turn, playerScores, multiplayer);
+                playerRolls[i] = WhichPlayer(turn, playerRolls, multiplayer);
                 turn++;
             }
 
-            if (playerScores[0] == playerScores[1])
+            if (playerRolls[0] == playerRolls[1])
             {
                 Console.WriteLine("It's a tie!" +
-                    $"\nPlayer 1 score: {playerScores[0]}" +
-                    $"\nPlayer 2 score: {playerScores[1]}");
+                    $"\nPlayer 1 rolls: {playerRolls[0]}" +
+                    $"\nPlayer 2 rolss: {playerRolls[1]}");
             }
             else
             {
-                Console.WriteLine(playerScores[0] > playerScores[1] ? "Player 1 wins!" +
-                                                                 $"\nPlayer 1 score: {playerScores[0]}" +
-                                                                 $"\nPlayer 2 score: {playerScores[1]}"
+                Console.WriteLine(playerRolls[0] > playerRolls[1] ? "Player 1 wins!" +
+                                                                 $"\nPlayer 1 rolls: {playerRolls[0]}" +
+                                                                 $"\nPlayer 2 rolls: {playerRolls[1]}"
                                                                  :
                                                                  "Player 2 wins!" +
-                                                                $"\nPlayer 1 score: {playerScores[0]}" +
-                                                                $"\nPlayer 2 score: {playerScores[1]}");
+                                                                $"\nPlayer 1 rolls: {playerRolls[0]}" +
+                                                                $"\nPlayer 2 rolls: {playerRolls[1]}");
             }
+            if (playerRolls[0] < playerRolls[1])
+            {
+                highscore =- playerRolls[0];
+            }
+            else
+            {
+                highscore =- playerRolls[1];
+            }
+            if (highscore < Statistics.threeOrMoreHighScore)
+            {
+                Console.WriteLine("New High Score!");
+                Statistics.threeOrMoreHighScore = highscore;
+            }
+            
+            
             Console.WriteLine("\nGame Over! Returning to menu!");
             Thread.Sleep(2000);
             Console.Clear();
@@ -78,12 +97,13 @@ namespace OOP_2_Code
                 if (die.DieValue != mostCommon)
                 {
                     die.DieRoll();
+                    Statistics.totalDiceRolled++;
                 }
             }
             return dice;
         }
 
-        private int WhichPlayer(int turn, int[]playerScore, bool multiplayer)
+        private int WhichPlayer(int turn, int[]playerRolls, bool multiplayer)
         {
             // UI using ANSI escape sequences
             string N = Console.IsOutputRedirected ? "" : "\x1b[39m"; //reset color
@@ -91,7 +111,6 @@ namespace OOP_2_Code
             string G = Console.IsOutputRedirected ? "" : "\x1b[92m"; //green
 
             bool gameOver = false;
-            int total = 0;
             int sum = 0;
             int i = 0;
             
@@ -102,8 +121,8 @@ namespace OOP_2_Code
 
                 if (turn == 1 && multiplayer == false)
                 {
-                    Console.WriteLine("Computer is rolling...");
-                    Thread.Sleep(1000);
+                    Console.WriteLine("Computer is rolling... \n");
+                    Thread.Sleep(2000);
                 }
                 else
                 {
@@ -119,6 +138,7 @@ namespace OOP_2_Code
                 foreach (Die die in dice)
                 {
                     die.DieRoll();
+                    Statistics.totalDiceRolled++;
                 }
 
                 var ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
@@ -130,7 +150,6 @@ namespace OOP_2_Code
                                      $"\nDie 4: {dice[3].DieValue} ¦" +
                                      $"\nDie 5: {dice[4].DieValue} ¦ Total: {sum}";
 
-
                 Console.WriteLine(displayGame);
 
                 while (ofAKind == 2)
@@ -141,13 +160,18 @@ namespace OOP_2_Code
                     {
                         if (turn == 1 && multiplayer == false)
                         {
-                            Console.WriteLine("Computer is rerolling the remaining...");
-                            Thread.Sleep(1000);
+                            Console.WriteLine("Computer is rerolling the remaining...\n");
+                            Thread.Sleep(1500);
                             dice = rerollRemaining(dice);
                             ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
                             i++;
-                            
-                            Console.WriteLine(displayGame);
+
+                            Console.WriteLine($"Roll {i}: ");
+                            foreach (Die die in dice)
+                            {
+                                Console.WriteLine($"Die {Array.IndexOf(dice, die) + 1}: {die.DieValue}");
+                            }
+
                             break;
                         }
                         else
@@ -159,10 +183,16 @@ namespace OOP_2_Code
                                 {
                                     die.DieRoll();
                                 }
+                                
                                 ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
                                 i++;
 
-                                Console.WriteLine(displayGame);
+                                Console.WriteLine($"Roll {i}: ");
+                                foreach (Die die in dice)
+                                {
+                                    Console.WriteLine($"Die {Array.IndexOf(dice, die) + 1}: {die.DieValue}");
+                                }
+
                                 break;
                             }
                             else if (choice.ToUpper() == "R")
@@ -171,7 +201,12 @@ namespace OOP_2_Code
                                 ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
                                 i++;
 
-                                Console.WriteLine(displayGame);
+                                Console.WriteLine($"Roll {i}: ");
+                                foreach (Die die in dice)
+                                {
+                                    Console.WriteLine($"Die {Array.IndexOf(dice, die) + 1}: {die.DieValue}");
+                                }
+
                                 break;
                             }
                             else
@@ -182,9 +217,9 @@ namespace OOP_2_Code
                     }
                 }
 
+
                 switch (ofAKind)
                 {
-              
                     case 3:
                         Console.WriteLine($"You got a {G}Three of a kind!" +
                                           $"\n+3 Points!{N}");
@@ -206,14 +241,14 @@ namespace OOP_2_Code
                 }
 
                 
-                if (sum >= 21)
+                if (sum >= 20)
                 {
                     Console.WriteLine($"You scored {sum}! in {i} rolls!");
-                    playerScore[turn] = sum;
+                    playerRolls[turn] = i;
                     gameOver = true;
                 }
             }
-            return playerScore[turn];
+            return playerRolls[turn];
         }
     }
 }
