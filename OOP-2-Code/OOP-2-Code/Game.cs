@@ -33,7 +33,7 @@ public abstract class Game
         // Main game loop
         while (true)
         {
-            Console.WriteLine("-----------------------------------------------" +
+            Console.WriteLine($"{N}-----------------------------------------------" +
                           $"\n{G}Games:" +
                           $"\n{G}[1]Three or More" +
                           $"\n{G}[2]Sevens Out" +

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,15 +14,38 @@ namespace OOP_2_Code
         {
             int turn = 0;
             int[] playerScores = [0, 0];
+            bool multiplayer = false;
 
             Console.WriteLine("Now playing... Sevens Out!");
             Thread.Sleep(2000);
             Console.Clear();
 
+            while (true)
+            {
+                Console.WriteLine("Would you like to play against another player or the computer? P/C");
+                var choice = Console.ReadLine();
+                if (choice.ToUpper() == "P")
+                {
+                    Console.WriteLine("You have chosen to play against another player.");
+                    multiplayer = true;
+                    break;
+                }
+                else if (choice.ToUpper() == "C")
+                {
+                    Console.WriteLine("You have chosen to play against the computer.");
+                    multiplayer = false;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter P or C.");
+                }
+            }
+
             for (int i = 0; i < 2; i++)
             {
                 Console.WriteLine($"Player {turn + 1}:");
-                playerScores[i] = WhichPlayer(turn, playerScores);
+                playerScores[i] = WhichPlayer(turn, playerScores, multiplayer);
                 turn++;
             }
 
@@ -46,7 +70,7 @@ namespace OOP_2_Code
             Console.Clear();
             Game.Main();
         }
-        private int WhichPlayer(int turn, int[] playerScore)
+        private int WhichPlayer(int turn, int[] playerScore, bool multiplayer)
         {
             // UI using ANSI escape sequences
             string N = Console.IsOutputRedirected ? "" : "\x1b[39m"; //reset color
@@ -63,7 +87,17 @@ namespace OOP_2_Code
             while (!gameOver)
             {
                 Console.WriteLine("Press Enter to roll the dice...");
-                Console.ReadLine();
+                
+                if (turn == 1 && multiplayer == false)
+                {
+                    Console.WriteLine("Computer is rolling...");
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    Console.ReadLine();
+                }
+
                 i++;
                 die1.DieRoll();
                 die2.DieRoll();

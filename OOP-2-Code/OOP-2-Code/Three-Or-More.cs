@@ -13,15 +13,37 @@ namespace OOP_2_Code
         {
             int turn = 0;
             int[] playerScores = [0, 0];
+            bool multiplayer = false;
 
             Console.WriteLine("Now playing... Three or More!");
             Thread.Sleep(2000);
             Console.Clear();
 
+            while (true)
+            {
+                Console.WriteLine("Would you like to play against another player or the computer? P/C");
+                var choice = Console.ReadLine();
+                if (choice.ToUpper() == "P")
+                {
+                    multiplayer = true;
+                    break;
+                }
+                else if (choice.ToUpper() == "C")
+                {
+                    multiplayer = false;
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter P or C.");
+                }
+            }
+            
+
             for (int i = 0; i < 2; i++)
             {
                 Console.WriteLine($"Player {turn + 1}:");
-                playerScores[i] = WhichPlayer(turn, playerScores);
+                playerScores[i] = WhichPlayer(turn, playerScores, multiplayer);
                 turn++;
             }
 
@@ -46,72 +68,123 @@ namespace OOP_2_Code
             Console.Clear();
             Game.Main();
         }
-        private int WhichPlayer(int turn, int[]playerScore)
+
+        private Die[] rerollRemaining(Die[] dice)
+        {
+
+            var mostCommon = dice.GroupBy(d => d.DieValue).OrderByDescending(g => g.Count()).First().Key;
+            foreach (Die die in dice)
+            {
+                if (die.DieValue != mostCommon)
+                {
+                    die.DieRoll();
+                }
+            }
+            return dice;
+        }
+
+        private int WhichPlayer(int turn, int[]playerScore, bool multiplayer)
         {
             // UI using ANSI escape sequences
             string N = Console.IsOutputRedirected ? "" : "\x1b[39m"; //reset color
             string R = Console.IsOutputRedirected ? "" : "\x1b[91m"; //red
             string G = Console.IsOutputRedirected ? "" : "\x1b[92m"; //green
 
-            Die die1 = new Die();
-            Die die2 = new Die();
-            Die die3 = new Die();
-            Die die4 = new Die();
-            Die die5 = new Die();
-
             bool gameOver = false;
             int total = 0;
             int sum = 0;
             int i = 0;
+            
 
             while (!gameOver)
             {
                 Console.WriteLine("Press Enter to roll the dice...");
-                Console.ReadLine();
-                i++;
-                die1.DieRoll();
-                die2.DieRoll();
-                die3.DieRoll();
-                die4.DieRoll();
-                die5.DieRoll();
 
-                int[] dice = new int[] { die1.DieValue, die2.DieValue, die3.DieValue, die4.DieValue, die5.DieValue };
-                var mostCommon = dice.GroupBy(x => x).OrderByDescending(x => x.Count()).First();
-
-                Console.WriteLine($"Roll {i}: " +
-                    $"\nDie 1: {die1.DieValue} ¦" +
-                    $"\nDie 2: {die2.DieValue} ¦" +
-                    $"\nDie 3: {die3.DieValue} ¦" +
-                    $"\nDie 4: {die4.DieValue} ¦" +
-                    $"\nDie 5: {die5.DieValue} ¦ Total: {sum}");
-
-
-                switch (mostCommon.Count())
+                if (turn == 1 && multiplayer == false)
                 {
-                    case 2:
-                        while (true)
+                    Console.WriteLine("Computer is rolling...");
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    Console.ReadLine();
+                }
+
+                i++;
+                Die[] dice = new Die[5];
+                for (int j = 0; j < dice.Length; j++)
+                {
+                    dice[j] = new Die();
+                }
+                foreach (Die die in dice)
+                {
+                    die.DieRoll();
+                }
+
+                var ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
+
+                string displayGame = $"Roll {i}: " +
+                                     $"\nDie 1: {dice[0].DieValue} ¦" +
+                                     $"\nDie 2: {dice[1].DieValue} ¦" +
+                                     $"\nDie 3: {dice[2].DieValue} ¦" +
+                                     $"\nDie 4: {dice[3].DieValue} ¦" +
+                                     $"\nDie 5: {dice[4].DieValue} ¦ Total: {sum}";
+
+
+                Console.WriteLine(displayGame);
+
+                while (ofAKind == 2)
+                {
+                    Console.WriteLine($"You got a {R}Two of a kind!{N}" +
+                                      "\nWould you like to reroll all of the remaining? (A/R)");
+                    while (true)
+                    {
+                        if (turn == 1 && multiplayer == false)
                         {
-                            Console.WriteLine($"You got a {R}Two of a kind!{N}" +
-                                          $"\nWould you like to re-roll all the dice or just the other 3? " +
-                                          $"\nA for all, R for remainder: ");
+                            Console.WriteLine("Computer is rerolling the remaining...");
+                            Thread.Sleep(1000);
+                            dice = rerollRemaining(dice);
+                            ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
+                            i++;
+                            
+                            Console.WriteLine(displayGame);
+                            break;
+                        }
+                        else
+                        {
                             var choice = Console.ReadLine();
-                            if (choice.ToUpper() == "A") { break; }
+                            if (choice.ToUpper() == "A")
+                            {
+                                foreach (Die die in dice)
+                                {
+                                    die.DieRoll();
+                                }
+                                ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
+                                i++;
+
+                                Console.WriteLine(displayGame);
+                                break;
+                            }
                             else if (choice.ToUpper() == "R")
                             {
-                                for (int j = 2; j < 3; j++)
-                                {
-                                    Console.WriteLine($"Re-rolling die {j + 1}...");
-                                    dice[dice[j]] = die1.DieRoll();
-                                }
+                                dice = rerollRemaining(dice);
+                                ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
+                                i++;
+
+                                Console.WriteLine(displayGame);
                                 break;
                             }
                             else
                             {
                                 Console.WriteLine("Invalid input. Please enter A or R.");
                             }
-                        }
-                        
-                    break;
+                        }  
+                    }
+                }
+
+                switch (ofAKind)
+                {
+              
                     case 3:
                         Console.WriteLine($"You got a {G}Three of a kind!" +
                                           $"\n+3 Points!{N}");
