@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -17,7 +18,7 @@ namespace OOP_2_Code
             int highscore;
 
             Console.WriteLine("Now playing... Three or More!");
-            Statistics.threeOrMoreGamesPlayed++;
+            Statistics.LoadStats(this);
             Thread.Sleep(2000);
             Console.Clear();
 
@@ -57,32 +58,24 @@ namespace OOP_2_Code
                     $"\nPlayer 1 rolls: {playerRolls[0]}" +
                     $"\nPlayer 2 rolss: {playerRolls[1]}");
             }
-            else
+            else if (playerRolls[0] < playerRolls[1])
             {
-                Console.WriteLine(playerRolls[0] > playerRolls[1] ? "Player 1 wins!" +
-                                                                 $"\nPlayer 1 rolls: {playerRolls[0]}" +
-                                                                 $"\nPlayer 2 rolls: {playerRolls[1]}"
-                                                                 :
-                                                                 "Player 2 wins!" +
-                                                                $"\nPlayer 1 rolls: {playerRolls[0]}" +
-                                                                $"\nPlayer 2 rolls: {playerRolls[1]}");
-            }
-            if (playerRolls[0] < playerRolls[1])
-            {
-                highscore =- playerRolls[0];
+                Console.WriteLine("Player 1 wins!" +
+                                 $"\nPlayer 1 rolls: {playerRolls[0]}" +
+                                 $"\nPlayer 2 rolls: {playerRolls[1]}");
             }
             else
             {
-                highscore =- playerRolls[1];
+                Console.WriteLine("Player 2 wins!" +
+                                 $"\nPlayer 1 rolls: {playerRolls[0]}" +
+                                 $"\nPlayer 2 rolls: {playerRolls[1]}");
             }
-            if (highscore < Statistics.threeOrMoreHighScore)
-            {
-                Console.WriteLine("New High Score!");
-                Statistics.threeOrMoreHighScore = highscore;
-            }
+            
+            
             
             
             Console.WriteLine("\nGame Over! Returning to menu!");
+            Statistics.SaveStats(this);
             Thread.Sleep(2000);
             Console.Clear();
             Game.Main();
@@ -97,7 +90,7 @@ namespace OOP_2_Code
                 if (die.DieValue != mostCommon)
                 {
                     die.DieRoll();
-                    Statistics.totalDiceRolled++;
+                    DiceRolled++;
                 }
             }
             return dice;
@@ -138,7 +131,7 @@ namespace OOP_2_Code
                 foreach (Die die in dice)
                 {
                     die.DieRoll();
-                    Statistics.totalDiceRolled++;
+                    DiceRolled++;
                 }
 
                 var ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
@@ -218,6 +211,7 @@ namespace OOP_2_Code
                 }
 
 
+
                 switch (ofAKind)
                 {
                     case 3:
@@ -249,6 +243,55 @@ namespace OOP_2_Code
                 }
             }
             return playerRolls[turn];
+        }
+
+        public void Test()
+        {
+            bool testOver = false;
+            int sum = 0;
+            while (!testOver)
+            {
+                
+                Die[] dice = new Die[5];
+                for (int j = 0; j < dice.Length; j++)
+                {
+                    dice[j] = new Die();
+                }
+                foreach (Die die in dice)
+                {
+                    die.DieRoll();
+                }
+                
+                var ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
+
+                while (ofAKind == 2)
+                {
+                    dice = rerollRemaining(dice);
+                    ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
+                }
+
+                switch (ofAKind)
+                {
+                    case 3:
+                        sum += 3;
+                        break;
+                    case 4:
+                        sum += 6;
+                        break;
+                    case 5:
+                        sum += 12;
+                        break;
+                    default:
+                        break;
+                }
+
+
+                if (sum >= 20)
+                {
+                    Debug.Assert(sum >= 20, "Sum is greater than 20. game ended");
+                    testOver = true;
+                }
+            }
         }
     }
 }

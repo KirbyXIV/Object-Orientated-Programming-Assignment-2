@@ -5,6 +5,11 @@ namespace OOP_2_Code;
 
 public abstract class Game
 {
+    internal int sevensOutHighScore;
+    internal int threeOrMoreHighScore;
+    internal int sevensOutGamesPlayed;
+    internal int threeOrMoreGamesPlayed;
+
     /// <summary>
     /// Main Program, runs the game
     /// </summary>
@@ -40,7 +45,7 @@ public abstract class Game
                           $"\n{N}-------------------" +
                           $"\n{R}Admin Choices:" +
                           $"\n{R}[V]View Statistics" +
-                          $"\n{R}[S]Reset Statistics" +
+                          $"\n{R}[R]Reset Statistics" +
                           $"\n{R}[T]Run Tests" +
                           $"\n{N}-------------------" +
                           $"\n[E]Exit Program" +
@@ -62,7 +67,7 @@ public abstract class Game
                     Console.WriteLine("Invalid input. Please enter a number between 1 and " + Games.Length);
                 }
             }
-            else if (choice.ToUpper() == "S")
+            else if (choice.ToUpper() == "R")
             {
                 Console.WriteLine($"{R}Stats reset... Clearing Console \n");
                 Statistics.ResetStats();
@@ -72,7 +77,7 @@ public abstract class Game
             else if (choice.ToUpper() == "V")
             {
                 Console.WriteLine($"{G}Stats saved... Clearing Console \n");
-                Statistics.SavedStats();
+                Statistics.ViewStats();
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
                 Console.Clear();
@@ -102,4 +107,5 @@ public abstract class Game
     protected abstract void Play();
     public int timesPlayed { get; set; } = 0;
     public int highScore { get; set; } = 0;
+    public int DiceRolled { get; internal set; }
 }

@@ -9,6 +9,7 @@ namespace OOP_2_Code
 {
     class Sevens_Out : Game
     {
+        public int sevensOutHighScore;
 
         protected override void Play()
         {
@@ -17,7 +18,7 @@ namespace OOP_2_Code
             bool multiplayer = false;
 
             Console.WriteLine("Now playing... Sevens Out!");
-            Statistics.sevensOutGamesPlayed++;
+            Statistics.LoadStats(this);
             Thread.Sleep(2000);
             Console.Clear();
 
@@ -50,36 +51,34 @@ namespace OOP_2_Code
                 turn++;
             }
 
-            if (playerScores[0] == playerScores[1])
+            if (playerScores[0] > playerScores[1])
             {
-                Console.WriteLine("It's a tie!" +
-                    $"\nPlayer 1 score: {playerScores[0]}" +
-                    $"\nPlayer 2 score: {playerScores[1]}");
-                
+                Console.WriteLine("Player 1 wins!" +
+                                 $"Player 1 scored: {playerScores[0]}" +
+                                 $"Player 2 scored: {playerScores[1]}");
+            }
+            else if (playerScores[0] < playerScores[1])
+            {
+                Console.WriteLine("Player 2 wins!" +
+                                 $"Player 1 scored: {playerScores[0]}" +
+                                 $"Player 2 scored: {playerScores[1]}");
             }
             else
             {
-                Console.WriteLine(playerScores[0] > playerScores[1] ? "Player 1 wins!" +
-                                                                 $"\nPlayer 1 score: {playerScores[0]}" +
-                                                                 $"\nPlayer 2 score: {playerScores[1]}"
-                                                                 :
-                                                                 "Player 2 wins!" +
-                                                                $"\nPlayer 1 score: {playerScores[0]}" +
-                                                                $"\nPlayer 2 score: {playerScores[1]}");
+                Console.WriteLine("It's a tie!");
             }
 
-            if (playerScores[0] > playerScores[1] && playerScores[0] > Statistics.sevensOutHighScore)
+            if (playerScores[0] > sevensOutHighScore)
             {
-                Console.WriteLine("New High Score!");
-                Statistics.sevensOutHighScore = playerScores[0];
+                sevensOutHighScore = playerScores[0];
             }
-            else if (playerScores[1] > playerScores[0] && playerScores[1] > Statistics.sevensOutHighScore)
+            else if (playerScores[1] > sevensOutHighScore)
             {
-                Console.WriteLine("New High Score!");
-                Statistics.sevensOutHighScore = playerScores[1];
+                sevensOutHighScore = playerScores[1];
             }
 
             Console.WriteLine("\nGame Over! Returning to menu!");
+            Statistics.SaveStats(this);
             Thread.Sleep(2000);
             Console.Clear();
             Game.Main();
@@ -122,7 +121,7 @@ namespace OOP_2_Code
                 foreach (Die die in dice)
                 {
                     die.DieRoll();
-                    Statistics.totalDiceRolled++;
+                    DiceRolled++;
                 }
 
 
@@ -150,6 +149,42 @@ namespace OOP_2_Code
                 }
             }
             return playerScore[turn];
+        }
+
+        public void Test()
+        {
+            int total = 0;
+            int sum = 0;
+            bool testOver = false;
+            while (!testOver)
+            {
+                Die[] dice = new Die[2];
+                for (int j = 0; j < dice.Length; j++)
+                {
+                    dice[j] = new Die();
+                }
+
+                foreach (Die die in dice)
+                {
+                    die.DieRoll();
+                }
+
+
+                if (dice[0].DieValue == dice[1].DieValue)
+                {
+                    total = (dice[0].DieValue + dice[1].DieValue) * 2;
+
+                }
+                else { total = dice[0].DieValue + dice[1].DieValue; }
+
+                sum += total;
+                if (total == 7)
+                {
+                    Debug.Assert(total == 7, "game ended correctly");
+                    testOver = true;
+                }
+            }
+            
         }
     }
 }
