@@ -10,18 +10,22 @@ namespace OOP_2_Code
 {
     class Three_Or_More : Game
     { 
+        // sets name
         public Three_Or_More() { name = "Three or More"; }
         protected override void Play()
         {
+            // variables
             int turn = 0;
             int[] playerRolls = [0, 0];
             bool multiplayer = false;
 
             Console.WriteLine("Now playing... Three or More!");
+            // loads the stats
             Statistics.LoadStats(this);
             Thread.Sleep(2000);
             Console.Clear();
 
+            // player can only input p or c
             while (true)
             {
                 Console.WriteLine("Would you like to play against another player or the computer? P/C" +
@@ -43,8 +47,8 @@ namespace OOP_2_Code
                     Console.WriteLine("Invalid input. Please enter P or C.");
                 }
             }
-            
 
+            // runs the game for each player and saves their score seperately in the array
             for (int i = 0; i < 2; i++)
             {
                 Console.WriteLine($"Player {turn + 1}:");
@@ -52,6 +56,7 @@ namespace OOP_2_Code
                 turn++;
             }
 
+            // checks for winner
             if (playerRolls[0] == playerRolls[1])
             {
                 Console.WriteLine("It's a tie!" +
@@ -71,6 +76,7 @@ namespace OOP_2_Code
                                  $"\nPlayer 2 rolls: {playerRolls[1]}");
             }
             
+            // sets new highscore
             if (playerRolls[0] > highscore)
             {
                 highscore = playerRolls[0];
@@ -82,6 +88,7 @@ namespace OOP_2_Code
             
             
             Console.WriteLine("\nGame Over! Returning to menu!");
+            // saves stats
             Statistics.SaveStats(this);
             Thread.Sleep(2000);
             Console.Clear();
@@ -90,12 +97,13 @@ namespace OOP_2_Code
 
         private Die[] rerollRemaining(Die[] dice)
         {
-
+            // finds most common die and rerolls the remaining 3
             var mostCommon = dice.GroupBy(d => d.DieValue).OrderByDescending(g => g.Count()).First().Key;
             foreach (Die die in dice)
             {
                 if (die.DieValue != mostCommon)
                 {
+                    // rerolls die and adds to dice rolled
                     die.DieRoll();
                     DiceRolled++;
                 }
@@ -110,13 +118,15 @@ namespace OOP_2_Code
             string R = Console.IsOutputRedirected ? "" : "\x1b[91m"; //red
             string G = Console.IsOutputRedirected ? "" : "\x1b[92m"; //green
 
+            // variables, i = player rolls
             bool gameOver = false;
             int sum = 0;
             int i = 0;
             
-
+            // keeps player in gameplay loop until their score >= 20
             while (!gameOver)
             {
+                // if player a computer, changes the "input"
                 Console.WriteLine("Press Enter to roll the dice...");
 
                 if (turn == 1 && multiplayer == false)
@@ -129,7 +139,10 @@ namespace OOP_2_Code
                     Console.ReadLine();
                 }
 
+                // checks total player rolls
                 i++;
+
+                // instantiates 5 die
                 Die[] dice = new Die[5];
                 for (int j = 0; j < dice.Length; j++)
                 {
@@ -137,12 +150,15 @@ namespace OOP_2_Code
                 }
                 foreach (Die die in dice)
                 {
+                    // rolls each die, adds to dice total
                     die.DieRoll();
                     DiceRolled++;
                 }
 
+                // finds most common value
                 var ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
 
+                // displays game
                 string displayGame = $"Roll {i}: " +
                                      $"\nDie 1: {dice[0].DieValue} ¦" +
                                      $"\nDie 2: {dice[1].DieValue} ¦" +
@@ -152,6 +168,7 @@ namespace OOP_2_Code
 
                 Console.WriteLine(displayGame);
 
+                // keeps player looping
                 while (ofAKind == 2)
                 {
                     Console.WriteLine($"You got a {R}Two of a kind!{N}" +
@@ -169,6 +186,7 @@ namespace OOP_2_Code
                             Console.WriteLine($"Roll {i}: ");
                             foreach (Die die in dice)
                             {
+                                // updates display mid while loop
                                 Console.WriteLine($"Die {Array.IndexOf(dice, die) + 1}: {die.DieValue}");
                             }
 
@@ -179,6 +197,7 @@ namespace OOP_2_Code
                             var choice = Console.ReadLine();
                             if (choice.ToUpper() == "A")
                             {
+                                // rerolls all die
                                 foreach (Die die in dice)
                                 {
                                     die.DieRoll();
@@ -197,6 +216,7 @@ namespace OOP_2_Code
                             }
                             else if (choice.ToUpper() == "R")
                             {
+                                // rerolls remaining
                                 dice = rerollRemaining(dice);
                                 ofAKind = dice.GroupBy(d => d.DieValue).Max(g => g.Count());
                                 i++;
@@ -217,8 +237,7 @@ namespace OOP_2_Code
                     }
                 }
 
-
-
+                // adds points depending of their of a kind amount
                 switch (ofAKind)
                 {
                     case 3:
@@ -254,8 +273,11 @@ namespace OOP_2_Code
 
         public void Test()
         {
+            // variables
             bool testOver = false;
             int sum = 0;
+
+            // keeps test runnning until score >= 20
             while (!testOver)
             {
                 

@@ -8,13 +8,16 @@ namespace OOP_2_Code
     {
         public static void SaveStats(Game game)
         {
+            // checks if json file exists
             if (File.Exists("../stats.json"))
             {
+                // loads the stats from json file
                 var stats = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText("../stats.json"));
 
+                // gets the amount of dice rolled
                 stats["Total Dice Rolled"] += game.DiceRolled;
                 
-
+                // gets highscore and times played for each game
                 if (game is Three_Or_More)
                 {
                     stats["Three or More Games Played"]++;
@@ -27,8 +30,8 @@ namespace OOP_2_Code
                     stats["Sevens Out High Score"] = game.highscore;
                 }
 
+                // saves the stats to the json file
                 var json = JsonConvert.SerializeObject(stats);
-
                 File.WriteAllText("../stats.json", json);
             }
         }
@@ -37,8 +40,10 @@ namespace OOP_2_Code
         {
             if (File.Exists("../stats.json"))
             {
+                // loads the stats from the json file
                 var stats = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText("../stats.json"));
 
+                // sets the stats for the game
                 if (game is Three_Or_More)
                 {
                     game.timesPlayed = stats["Three or More Games Played"];
@@ -57,17 +62,18 @@ namespace OOP_2_Code
 
         public static void ResetStats()
         {
+            // resets stats
             var stats = new Dictionary<string, int>
             {
-                {"Three or More Games Played", 0},
                 {"Sevens Out Games Played", 0},
+                {"Three or More Games Played", 0},
                 {"Sevens Out High Score", 0},
                 {"Three or More High Score", 0},
                 {"Total Dice Rolled", 0 }
             };
 
+            // saves stats to file
             var json = JsonConvert.SerializeObject(stats);
-
             File.WriteAllText("../stats.json", json);
         }
 
@@ -75,13 +81,14 @@ namespace OOP_2_Code
         {
             if (File.Exists("../stats.json"))
             {
+                // load stats
                 var stats = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText("../stats.json"));
+                // display stats
                 foreach (var stat in stats)
                 {
                     Console.WriteLine($"{stat.Key}: {stat.Value}");
                 }
             }
-            else { Console.WriteLine("SILLY PRICK"); }
         }
     }
 }

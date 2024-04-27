@@ -34,7 +34,7 @@ public abstract class Game
         string N = Console.IsOutputRedirected ? "" : "\x1b[39m"; //reset color
         string R = Console.IsOutputRedirected ? "" : "\x1b[91m"; //red
         string G = Console.IsOutputRedirected ? "" : "\x1b[92m"; //green
-        // Main game loop
+        // Main game loop, only allows chosen inputs
         while (true)
         {
             Console.WriteLine($"{N}-----------------------------------------------" +
@@ -54,10 +54,12 @@ public abstract class Game
                            "\nChoice: ");
 
             var choice = Console.ReadLine();
+            // if user inputs a number, go into if loop
             if (int.TryParse(choice, out int gameChoice))
             {
                 if (gameChoice > 0 && gameChoice <= Games.Length)
                 {
+                    // player selects game
                     Games[gameChoice - 1].Play();
                     break;
                 }
@@ -66,8 +68,10 @@ public abstract class Game
                     Console.WriteLine("Invalid input. Please enter a number between 1 and " + Games.Length);
                 }
             }
+            // if player does not enter a number, go into else if loop
             else if (choice.ToUpper() == "R")
             {
+                // reset stats
                 Console.WriteLine($"{R}Stats reset... Clearing Console \n");
                 Statistics.ResetStats();
                 Thread.Sleep(2500);
@@ -75,6 +79,7 @@ public abstract class Game
             }
             else if (choice.ToUpper() == "V")
             {
+                // view stats
                 Statistics.ViewStats();
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
@@ -82,6 +87,7 @@ public abstract class Game
             }
             else if (choice.ToUpper() == "T")
             {
+                // run tests
                 Console.WriteLine($"{R}Tests run... Clearing Console \n");
                 Testing.RunTests();
                 Thread.Sleep(2500);
@@ -89,20 +95,24 @@ public abstract class Game
             }
             else if (choice.ToUpper() == "E")
             {
+                // exit program
                 Console.WriteLine("Exiting program...");
                 Thread.Sleep(1000);
                 Environment.Exit(0);
             }
             else
             {
-                Console.WriteLine("Invalid input. Please enter a number or R or T. \n");
+                // handles any incorrect input
+                Console.WriteLine("Invalid input. Please enter a number or R, V, T or E. \n");
                 Thread.Sleep(1000);
                 Console.Clear();
             }
         }
     }
 
+    // methods
     protected abstract void Play();
+    //properties
     public int highScore { get; set; } = 0;
     internal int DiceRolled;
 }
