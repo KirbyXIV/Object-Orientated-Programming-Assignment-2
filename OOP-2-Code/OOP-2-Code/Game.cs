@@ -5,10 +5,9 @@ namespace OOP_2_Code;
 
 public abstract class Game
 {
-    internal int sevensOutHighScore;
-    internal int threeOrMoreHighScore;
-    internal int sevensOutGamesPlayed;
-    internal int threeOrMoreGamesPlayed;
+    public int highscore { get; set; } = 0;
+    public int timesPlayed { get; set; } = 0;
+    public string name { get; init; } = string.Empty;
 
     /// <summary>
     /// Main Program, runs the game
@@ -76,7 +75,6 @@ public abstract class Game
             }
             else if (choice.ToUpper() == "V")
             {
-                Console.WriteLine($"{G}Stats saved... Clearing Console \n");
                 Statistics.ViewStats();
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
@@ -105,7 +103,6 @@ public abstract class Game
     }
 
     protected abstract void Play();
-    public int timesPlayed { get; set; } = 0;
     public int highScore { get; set; } = 0;
-    public int DiceRolled { get; internal set; }
+    internal int DiceRolled;
 }

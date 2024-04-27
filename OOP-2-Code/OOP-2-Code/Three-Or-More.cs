@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 namespace OOP_2_Code
 {
     class Three_Or_More : Game
-    {
+    { 
+        public Three_Or_More() { name = "Three or More"; }
         protected override void Play()
         {
             int turn = 0;
             int[] playerRolls = [0, 0];
             bool multiplayer = false;
-            int highscore;
 
             Console.WriteLine("Now playing... Three or More!");
             Statistics.LoadStats(this);
@@ -71,7 +71,14 @@ namespace OOP_2_Code
                                  $"\nPlayer 2 rolls: {playerRolls[1]}");
             }
             
-            
+            if (playerRolls[0] > highscore)
+            {
+                highscore = playerRolls[0];
+            }
+            else if (playerRolls[1] > highscore)
+            {
+                highscore = playerRolls[1];
+            }
             
             
             Console.WriteLine("\nGame Over! Returning to menu!");

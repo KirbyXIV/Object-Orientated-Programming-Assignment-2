@@ -18,13 +18,13 @@ namespace OOP_2_Code
                 if (game is Three_Or_More)
                 {
                     stats["Three or More Games Played"]++;
-                    stats["Three or More High Score"] = game.threeOrMoreHighScore;
+                    stats["Three or More High Score"] = game.highscore;
 
                 }
                 else if (game is Sevens_Out)
                 {
                     stats["Sevens Out Games Played"]++;
-                    stats["Sevens Out High Score"] = game.sevensOutHighScore;
+                    stats["Sevens Out High Score"] = game.highscore;
                 }
 
                 var json = JsonConvert.SerializeObject(stats);
@@ -39,11 +39,19 @@ namespace OOP_2_Code
             {
                 var stats = JsonConvert.DeserializeObject<Dictionary<string, int>>(File.ReadAllText("../stats.json"));
 
-                game.threeOrMoreHighScore = stats["Three or More High Score"];
-                game.sevensOutHighScore = stats["Sevens Out High Score"];
+                if (game is Three_Or_More)
+                {
+                    game.timesPlayed = stats["Three or More Games Played"];
+                    game.highscore = stats["Three or More High Score"];
+
+                }
+                else if (game is Sevens_Out)
+                {
+                    game.timesPlayed = stats["Sevens Out Games Played"];
+                    game.highscore = stats["Sevens Out High Score"];
+                }
                 game.DiceRolled = stats["Total Dice Rolled"];
-                game.sevensOutGamesPlayed = stats["Sevens Out Games Played"];
-                game.threeOrMoreGamesPlayed = stats["Three or More Games Played"];
+                
             }
         }
 
@@ -73,6 +81,7 @@ namespace OOP_2_Code
                     Console.WriteLine($"{stat.Key}: {stat.Value}");
                 }
             }
+            else { Console.WriteLine("SILLY PRICK"); }
         }
     }
 }

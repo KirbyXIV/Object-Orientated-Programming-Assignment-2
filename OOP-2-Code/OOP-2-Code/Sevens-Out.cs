@@ -9,7 +9,7 @@ namespace OOP_2_Code
 {
     class Sevens_Out : Game
     {
-        public int sevensOutHighScore;
+        public Sevens_Out() { name = "Sevens Out"; }
 
         protected override void Play()
         {
@@ -21,6 +21,8 @@ namespace OOP_2_Code
             Statistics.LoadStats(this);
             Thread.Sleep(2000);
             Console.Clear();
+
+
 
             while (true)
             {
@@ -68,13 +70,13 @@ namespace OOP_2_Code
                 Console.WriteLine("It's a tie!");
             }
 
-            if (playerScores[0] > sevensOutHighScore)
+            if (playerScores[0] > highscore)
             {
-                sevensOutHighScore = playerScores[0];
+                highscore = playerScores[0];
             }
-            else if (playerScores[1] > sevensOutHighScore)
+            if (playerScores[1] > highscore)
             {
-                sevensOutHighScore = playerScores[1];
+                highscore = playerScores[1];
             }
 
             Console.WriteLine("\nGame Over! Returning to menu!");
